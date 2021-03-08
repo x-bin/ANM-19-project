@@ -8,10 +8,12 @@ This repository contains my project in Advanced Network Management course(Fall 2
 ## Time Series Anomaly Detection 
 ### Background
 To ensure undisrupted Internet-based services, such as search engines, online shopping, and social networking, large Internet companies need to closely monitor various Key Performance Indicators (KPI, e.g., Page Views, number of online users, and number of orders) to accurately detect anomalies and trigger timely troubleshooting/mitigation. The figure below shows 1-week example of PV and the red circles mark some obvious anomalies.
+
 ![Exmaple](doc/example.png)
 
 ### Dataset
 There are totally 26 different types of KPI, which have different characteristics on the time axis. About 50% of the dataset (2476315 entries totally) is used for training. As shown in Figure 1, training datasets have labels (1 for anomaly and 0 for normal). The rest is testing dataset (2345211 entries totally). There are no labels in testing datasets (Figure 2) and our task is to detect whether an anomaly happens by giving a predict label. In each KPI, all entries are sorted by time.
+
 ![Training data](doc/traing.png)
 
 ![Test data](doc/test.png)
@@ -43,12 +45,14 @@ features. It’s worth noting that every different KPI time series has different
 2. SampleRatio
 * As shown in Figure 3, in the dataset, negative data (anomaly) is much less
 than the positive data (non-anomaly).
+
  ![Data composition](doc/data.png)
 
  * Therefore, we should strengthen the weight of negative data and make their sample ratio equal to positive one. Fortunately, when training keras model or xgboost model, they all have the parameter—sample ratio which can control the weight of training data. The reason we do not use negative sampling is that we don't know where to place the generated negative data in the sequence. We think generated negative data will destroy the features of the original data in the time dimension. Besides, since the delay threshold is set as 7, in another model we focus on the first 8 anomaly point and give them much bigger sample ratio. This trick will help the model detect the anomaly faster.
   
 ### Model Architecture
 Our model architecture is shown in Figure 4. After we did feature extraction, we trained 2 kinds of models—xgboost model and DNN model. What’s more, when training xgboost model, we use 2 different sample ratio, so we get 2 xgboost models too. Then we designed a voting method to ensemble these 3 models and do the time series anomaly detection job.
+
 ![model architecture](doc/architecture.png)
 
 #### XGBoost Model
@@ -66,6 +70,7 @@ The reason why we use 2 sample ratio is because we find that the first sample ra
 
 #### DNN Model
 Besides the XGBoost-based detectors introduced above, we also present a DNN- based detector to further enhance the performance of anomaly detection. The architecture of DNN is presented in Figure 5.
+
 ![DNN model](doc/DNN.png)
 <center>Figure 5 DNN Model</center>
 
